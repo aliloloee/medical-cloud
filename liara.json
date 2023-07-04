@@ -1,0 +1,13 @@
+{
+    "app" : "balin-cloud",
+    "django": {
+        "pythonVersion": "3.10",
+        "settingsFile": "hub/settings/production.py"
+    },
+    "disks": [
+        {
+            "name": "cloud-disk",
+            "mountTo": "media"
+        }
+    ]
+}

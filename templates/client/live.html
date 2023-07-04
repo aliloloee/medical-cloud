@@ -1,0 +1,33 @@
+<html>
+
+    <header>
+        <title>Live</title>
+    </header>
+
+    <body>
+        <h1>Value</h1>
+        <h3 id="val"></h3>
+    </body>
+
+
+    <script>
+        var elem = document.getElementById('val');
+        let socket = new WebSocket("ws://localhost:8000/ws/live/");
+
+        socket.onopen = function(e){
+            alert('Connection established');
+        }
+
+        socket.onmessage = function(e){
+            data = JSON.parse(e.data);
+            console.log(data.value);
+            elem.innerText = data.value;
+        }
+
+        socket.onclose = function(e){
+            alert('Connection closed');
+        }
+
+    </script>
+
+</html>
