@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+
+from django_celery_beat.models import IntervalSchedule, PeriodicTask
 
 from pills.models import UniversalPill, Pill, PillAlarm, AlarmNotification
 
-
+import json
 
 
 
@@ -60,15 +63,14 @@ class PillAlarmSerializer(serializers.ModelSerializer) :
     This serializer is written for normal users in which all fields except the periodic task are serialized.
 
     * The pill id needs to be included for creating new alarms.
-    * The "is_active" field is read_only in this serializer, because the activation process of an alarm is dependent on the periodic task of an alarm. Activation is written in another serializer class.
     """
     pill_id = serializers.UUIDField(write_only=True)
 
     class Meta :
         ref_name = None
         model = PillAlarm
-        fields = ('id', 'description', 'is_active', 'pill_id')
-        read_only_fields = ('id', 'is_active')
+        fields = ('id', 'description', 'pill_id')
+        read_only_fields = ('id',)
 
     def validate(self, data):
         pill_id = data['pill_id']
@@ -101,8 +103,8 @@ class PillAlarmUpdateSerializer(serializers.ModelSerializer) :
     class Meta :
         ref_name = None
         model = PillAlarm
-        fields = ('id', 'description', 'is_active',)
-        read_only_fields = ('id', 'is_active')
+        fields = ('id', 'description',)
+        read_only_fields = ('id',)
 
 
 class AlarmNotificationSerializer(serializers.ModelSerializer) :
@@ -150,3 +152,58 @@ class AlarmNotificationUpdateSerializer(serializers.ModelSerializer) :
         ref_name = None
         model = AlarmNotification
         fields = ('id', 'consumed', 'consumed_at', )
+
+
+class PillAlarmPeriodicTaskCreationSerializer(serializers.Serializer) :
+    """
+    This serializer is written for creating periodic task and assign it to a existing alarm.
+
+    * For now the periodic task is written based on interval, but it is better to modify this to a crontab periodic task since interval periodic task can malfunction if the server goes down for some reason.
+    """
+
+    seconds = serializers.IntegerField()
+
+    class Meta :
+        model = PillAlarm
+
+    def validate(self, data):
+        seconds = data['seconds']
+
+        if seconds < settings.PILL_ALARM_MIN_INTERVAL :
+            raise serializers.ValidationError(
+                            _('Alarm interval is small!!'),
+                            )
+        return data
+
+    def update(self, instance, validated_data):
+        seconds = validated_data.get('seconds')
+
+        schedule, created = IntervalSchedule.objects.get_or_create(
+            every=seconds,
+            period=IntervalSchedule.SECONDS,
+        )
+
+        name = f'send pill notification for alram-id of {instance.pk}'
+
+        # In case the alarm has an active periodic task
+        previous_task = instance.periodic_task
+        if previous_task != None :
+            instance.periodic_task.enabled = False
+            instance.periodic_task.delete()
+
+        periodic_task = PeriodicTask.objects.create(
+                    interval=schedule,
+                    name=name,
+                    task='pills.tasks.send_pill_notification',
+                    kwargs=json.dumps({
+                        'pill': instance.pill.name,
+                        'alarm-id' : str(instance.pk),
+                        'user': instance.user.firstname
+                    }),
+                )
+
+        instance.periodic_task = periodic_task
+        instance.save()
+
+        return instance
+

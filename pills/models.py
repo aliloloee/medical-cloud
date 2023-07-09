@@ -103,9 +103,9 @@ class PillAlarm(models.Model) :
                     Pill, on_delete=models.CASCADE,
                     related_name='alarms', verbose_name=_('Pill')
                     )
-    
+
     periodic_task = models.ForeignKey(
-                    PeriodicTask, on_delete=models.CASCADE, blank=True, null=True,
+                    PeriodicTask, on_delete=models.SET_NULL, blank=True, null=True,
                     related_name='alarms', verbose_name=_('Periodic Task')
                     )
 
@@ -113,8 +113,6 @@ class PillAlarm(models.Model) :
                     max_length=700, blank=True,
                     verbose_name=_('Alarm description')
                     )
-
-    is_active  = models.BooleanField(default=False, verbose_name=_('Alarm is active'))
 
     objects = models.Manager()
     active_objects = BasedOnActivation()

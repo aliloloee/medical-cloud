@@ -1,5 +1,3 @@
-from rest_framework import HTTP_HEADER_ENCODING
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from pills.models import PillAlarm
@@ -63,8 +61,8 @@ class PillAuthentication() :
         except self.model.DoesNotExist:
             raise AuthenticationFailed(_("Alarm not found"), code="user_not_found")
 
-        if not pill_alarm.is_active :
-            raise AuthenticationFailed(_("Alarm is inactive"), code="user_inactive")
+        # if not pill_alarm.is_active :
+        #     raise AuthenticationFailed(_("Alarm is inactive"), code="user_inactive")
 
         # Shouldn't happen
         if not user.is_active:

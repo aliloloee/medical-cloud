@@ -1,5 +1,7 @@
 from celery import shared_task
 
+from django.conf import settings
+
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -21,4 +23,5 @@ def send_pill_notification(*args, **kwargs) :
         }
         )
 
-    print(f'Consumption of {pill} for user {user}')
+    if settings.DEBUG :
+        print(f'Consumption of {pill} for user {user}')

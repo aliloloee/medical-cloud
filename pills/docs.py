@@ -239,7 +239,6 @@ schemas = {
                         'application/json' : {
                             "id": "string",
                             "description": "string",
-                            "is_active": "bool",
                         }
                     }
                 ),
@@ -259,17 +258,14 @@ schemas = {
                             {
                                 "id" : "string",
                                 "description" : "string",
-                                "is_active": "bool",
                             },
                             {
                                 "id" : "string",
                                 "description" : "string",
-                                "is_active": "bool",
                             },
                             {
                                 "id" : "string",
                                 "description" : "string",
-                                "is_active": "bool",
                             },
                         ]    
                     }
@@ -289,7 +285,6 @@ schemas = {
                         'application/json' : {
                             "id": "string",
                             "description": "string",
-                            "is_active": "bool",
                         },
                     }
                 ),
@@ -308,7 +303,6 @@ schemas = {
                         'application/json' : {
                             "id" : "string",
                             "description" : "string",
-                            "is_active": "bool",
                         },
                     }
                 ),
@@ -401,6 +395,39 @@ schemas = {
                             "consumed": "bool",
                             "consumed_at": "datetime string",
                         },
+                    }
+                ),
+                "401": openapi.Response(
+                    description="Authentication credentials were not provided",
+                ),
+            }
+        ),
+    },
+
+    'PillAlarmActivationAPIView' : {
+        'UPDATE' : dict(
+            operation_description='Set interval for a pre-created alarm with its id.',
+            operation_summary="Set interval for a pre-created alarm with its id",
+            responses={
+                "201": openapi.Response(
+                    description="Alarm interval creation",
+                    examples={
+                        'response' : 'Interval added to alarm'
+                    }
+                ),
+                "401": openapi.Response(
+                    description="Authentication credentials were not provided",
+                ),
+            }
+        ),
+        'DELETE' : dict(
+            operation_description='Delete the interval of a pre-created alarm with its id.',
+            operation_summary="Delete the interval of a pre-created alarm with its id",
+            responses={
+                "200": openapi.Response(
+                    description="Alarm interval removed",
+                    examples={
+                        'response' : 'Interval removed from alarm'
                     }
                 ),
                 "401": openapi.Response(

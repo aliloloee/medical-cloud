@@ -1,6 +1,6 @@
 from django.urls import path
 from client import consumers
-# from pills import consumers as pills_consumers
+from pills import consumers as pills_consumers
 
 
 
@@ -10,5 +10,5 @@ websocket_urlpatterns = [
 
 
     # Pill App websockets
-    # path('ws/notification/', pills_consumers.PillNotificationConsumer.as_asgi(), name='send-notification'),
+    path('ws/notification/', pills_consumers.PillNotificationConsumer.as_asgi(), name='send-notification'),
 ]

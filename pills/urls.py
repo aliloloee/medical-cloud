@@ -17,6 +17,7 @@ router.register('api/notification', views.AlarmNotificationViewSet)
 
 urlpatterns = [
     path('api/search-universal-pill/<str:keyword>/', views.UniversalPillLookUpAPIView.as_view(), name='api-univesal-pill-look-up'),
+    path('api/alarm-activation/<uuid:pk>/', views.PillAlarmActivationAPIView.as_view(), name='api-alarm-activation')
 ]
 
 

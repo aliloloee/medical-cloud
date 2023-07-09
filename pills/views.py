@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from django.db import IntegrityError
@@ -224,7 +225,6 @@ class AlarmNotificationViewSet(
     http_method_names = ['get', 'post', 'patch', ]
 
     def get_serializer_class(self):
-        print(self.action)
         if self.action in ['update', 'partial_update', ] :
             return serializers.AlarmNotificationUpdateSerializer
         else :
@@ -259,4 +259,44 @@ class AlarmNotificationViewSet(
         return Response(
             serializer.data,
             status = status.HTTP_201_CREATED
+        )
+
+
+class PillAlarmActivationAPIView(generics.GenericAPIView) :
+    """
+    This view provides the possibility of setting interval for alarm notification. The notifications are recieved through related websocket routings.
+
+    * The delete method does not delete the alarm but instead clears the interval from the alarm.
+    """
+
+    queryset = PillAlarm.objects.all()
+    serializer_class = serializers.PillAlarmPeriodicTaskCreationSerializer
+    permission_classes = [IsAuthenticated, ]
+    filter_backends = [IsOwnerFilterBackend, ]
+    lookup_field = 'pk'
+
+    @swagger_auto_schema(**schemas['PillAlarmActivationAPIView']['UPDATE'])
+    def patch(self, requset, pk) :
+        alarm = self.get_object()
+
+        serializer = self.serializer_class(alarm, data=requset.data, partial=True)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+
+        return Response(
+            _('Interval added to alarm'),
+            status=status.HTTP_201_CREATED
+        )
+
+    @swagger_auto_schema(**schemas['PillAlarmActivationAPIView']['DELETE'])
+    def delete(self, request, pk) :
+        alarm = self.get_object()
+
+        if alarm.periodic_task != None :
+            alarm.periodic_task.enabled = False
+            alarm.periodic_task.delete()
+
+        return Response(
+            _('Interval removed from alarm'),
+            status=status.HTTP_200_OK
         )

@@ -80,6 +80,9 @@ CORS_ALLOW_METHODS = [
 ## Timestamp(seconds) for PasswordResetTokenGenerator (default is 7 days)
 PASSWORD_RESET_TIMEOUT = 60*60 # 1hour
 
+# MINUMUM SECONDS FOR PILL ALARM SETTING
+PILL_ALARM_MIN_INTERVAL = 1   # ONE SECOND
+
 ## EMAIL CONFIGURATION
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST_USER = 'info@gmail.com'
