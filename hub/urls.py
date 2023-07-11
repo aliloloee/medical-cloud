@@ -23,6 +23,7 @@ urlpatterns = [
     path('devices/', include('devices.urls', namespace='devices')),
     path('client/', include('client.urls', namespace='clients')),
     path('pills/', include('pills.urls', namespace='pills')),
+    path('checkup/', include('checkup.urls', namespace='checkup')),
 ]
 
 

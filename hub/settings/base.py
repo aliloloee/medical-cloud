@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'devices',
     'client',
     'pills',
+    'checkup',
 
     # Celery beat
     'django_celery_beat',
@@ -133,7 +134,7 @@ SWAGGER_SETTINGS = {
 
 # JWT CONFIGURATION
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 
     'SIGNING_KEY': os.getenv('SECRET_KEY', 'Secret key not found!!'),
@@ -218,6 +219,37 @@ MAX_NOD = {
     'ADVANCED' : 20,
     'FREE' : -1
 }
+
+# BLOOD TEST ITEMS
+CBC               = 1, _('CBC')
+ESR               = 2, _('ESR')
+FBS               = 3, _('FBS')
+TG                = 4, _('TG')
+CHO               = 5, _('CHO')
+BUN               = 6, _('BUN')
+CREA              = 7, _('CREA')
+SGOT              = 8, _('SGOT')
+URIC_ACID         = 9, _('URIC_ACID')
+SGPT              = 10, _('SGPT')
+ALP               = 11, _('ALP')
+BILI_T            = 12, _('BILI_T')
+BILI_D            = 13, _('BILI_D')
+T_PROTEIN         = 14, _('T_PROTEIN')
+ALB               = 15, _('ALB')
+MG                = 16, _('MG')
+ZINC              = 17, _('ZINC')
+VIT_D             = 18, _('VIT_D')
+IRON              = 19, _('IRON')
+TIBC              = 20, _('TIBC')
+TSH               = 21, _('TSH')
+T4                = 22, _('T4')
+T3                = 23, _('T3')
+CA                = 24, _('CA')
+PHO               = 25, _('PHO')
+NA                = 26, _('NA')
+K                 = 27, _('K')
+UA                = 28, _('UA')
+UC                = 29, _('UC')
 
 # DEVICE ACTIVATION CODE LENGTH
 DEV_CODE_LENGTH = 4
